@@ -45,7 +45,7 @@
     #box li{
         width: 60px;
         height: 60px;
-        background-color:red;
+        background-color:#c60;
         float: left;
         position: relative;
     }
@@ -55,7 +55,6 @@
         height: 540px;
         background-color:#fff;
         margin:60px auto 0;
-overflow: hidden;
     }
     .line{
          width: 100%;
@@ -74,21 +73,43 @@ overflow: hidden;
         top:0;
     }
     .horse{
+
+    }
+    .flash{
+        animation:  twinkling 1s infinite ease-in-out;
+    }
+    .playR{
+        border: 3px red solid;
+        color: red;
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background-color: yellow;
-        color: #000;
+        background-color: #fff;
+        font-weight: 600;
         text-align: center;
-        line-height: 40px;
+        line-height: 34px;
         position: absolute;
         top:10px;
         left:10px;
         z-index: 100;
-        font-size: 20px;
+        font-size: 23px;
+        -webkit-transform: rotate(-180deg); /* Safari 3.1+, Chrome */
     }
-    .flash{
-        animation:  twinkling 1s infinite ease-in-out;
+    .playB{
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #fff;
+        font-weight: 600;
+        text-align: center;
+        line-height: 34px;
+        position: absolute;
+        top:10px;
+        left:10px;
+        z-index: 100;
+        font-size: 23px;
+        border: 3px blue solid;
+        color: blue;
     }
     @-webkit-keyframes twinkling{    /*透明度由0到1*/
         0%{
