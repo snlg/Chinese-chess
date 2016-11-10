@@ -34,8 +34,12 @@
         for(var s = 0; s < liObj.length; s++) {
             var qiObj = liObj[s].getElementsByTagName('div');
             if(hasClass(qiObj[qiObj.length-1],'flash')){
-                //do 走棋；
-                horseF(x,y,j);
+                //马的走法;
+                if(hasClass(fashObj[0],'horse')){
+                    horseF(x,y,j);
+                }
+
+
                 removeClass(fashObj[0],'flash');
             }
         };
@@ -43,9 +47,21 @@
     function horseF(x,y,j){
         //console.log(x,y,oldPosX,oldPosY);
         //alert(x+'和'+y)
-        console.log(oldPosX,oldPosY);
-        var oldPos=oldPosX+oldPosY*9-1;
-        if((x == oldPosX+2 && y==oldPosY-1)||(x == oldPosX+2 && y==oldPosY+1)||(x == oldPosX-2 && y==oldPosY-1)||(x == oldPosX-2 && y==oldPosY+1)||(x == oldPosX-1 && y==oldPosY+2)||(x == oldPosX+1 && y==oldPosY+2)||(x == oldPosX-1 && y==oldPosY-2)||(x == oldPosX+1 && y==oldPosY-2)){
+
+        var oldPos=oldPosX+oldPosY*9;
+        //console.log(oldPosX,oldPosY,oldPos);
+        var sonSum= liObj[oldPos+9].children.length;
+        console.log(sonSum);
+        if(
+            ((x == oldPosX+2 && y==oldPosY-1)&&(liObj[oldPos+1].children.length<3))||
+            ((x == oldPosX+2 && y==oldPosY+1)&&(liObj[oldPos+1].children.length<3))||
+            ((x == oldPosX-2 && y==oldPosY-1)&&(liObj[oldPos-1].children.length<3))||
+            ((x == oldPosX-2 && y==oldPosY+1)&&(liObj[oldPos-1].children.length<3))||
+            ((x == oldPosX-1 && y==oldPosY+2)&&(liObj[oldPos+9].children.length<3))||
+            ((x == oldPosX+1 && y==oldPosY+2)&&(liObj[oldPos+9].children.length<3))||
+            ((x == oldPosX-1 && y==oldPosY-2)&&(liObj[oldPos-9].children.length<3))||
+            ((x == oldPosX+1 && y==oldPosY-2)&&(liObj[oldPos-9].children.length<3)))
+        {
             for(var fHorse=0;fHorse<horseObj.length;fHorse++){
                 if(hasClass(horseObj[fHorse],'flash')){
                    // alert(fHorse);
@@ -131,7 +147,6 @@
                         console.log(j);
                         var chessPieces = liObj[j].getElementsByTagName('div')[2];//选择位置的棋子div
                         var ziObj = liObj[j].getElementsByTagName('div');//点击位置的div数组
-
                         if(count%2&&(ziObj.length>2)){
                             //奇数步并且有棋子
                             if(hasClass(ziObj[ziObj.length-1],'playR')){
@@ -176,63 +191,6 @@
                                 }
                             }
                         }
-
-                        if(flag==1){
-                            //move();
-
-                        }
-
-                        /* if(ziObj.length>2){
-                         //点击位置有棋子
-                         if(fashObj.length>0){
-                         //若棋盘已经有闪动的棋子
-                         removeClass(fashObj[0],'flash');
-                         addClass(chessPieces,'flash');
-                         return oldPosX = x,oldPosY = y;
-                         }
-                         else{
-                         addClass(chessPieces,'flash');
-                         return oldPosX = x,oldPosY = y,flag=1;
-                         }
-                         }*/
-                        /* else if(ziObj.length=2){
-                         //点击位置没有棋子
-                         if(fashObj.length>0) {
-                         move();
-                         }
-                         }
-                         return flag=1;*/
-                        /*
-                        var chessPieces = liObj[j].getElementsByTagName('div')[2];//选择的棋子
-                        var ziObj = liObj[j].getElementsByTagName('div');//点击位置的div数组
-                        alert(count);
-                        //先判断颜色, 先后顺序。
-                        if(count%2&&hasClass(chessPieces,'playB')){
-                            alert("redmove")
-                            active();
-                        }
-                        else if(!count%2&&hasClass(chessPieces,'playB')){
-                            active();
-                        }
-
-                        //chessPieces 当前选中的节点;
-
-                        //化成坐标;
-                        var x = j%9;
-                        var y = parseInt(j/9);
-                        //console.log(j);
-                        //判断当前点击处若没有被选中则选中并且添加闪烁
-                        function active(){
-                            if(ziObj.length>2){
-                                //子元素div个数大于2说明该位置有棋子
-                                //第一次点击之后先去掉所有的flash;确保整个棋盘只有一个flash;
-                                (fashObj.length >0)?removeClass(fashObj[0],'flash'):"";
-                                addClass(chessPieces,'flash');
-                                //console.log(x,y)
-                                return oldPosX = x,oldPosY = y;
-                            }
-                        }
-*/                        //return j;
                     }, false);
                 })(i) ;
             }
