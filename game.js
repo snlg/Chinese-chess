@@ -6,25 +6,28 @@
     var boxObj = document.getElementById('box');
     var liObj = boxObj.getElementsByClassName('lili');
     var horseObj = boxObj.getElementsByClassName('horse');
-    var oldPosX,oldPosY;
-    function hasClass(elem, cls){
+    var fashObj = document.getElementsByClassName('flash')[0];
+    var oldPosX,oldPosY,nowPosX,nowPosY;
+    var count = 0;
+    function hasClass(elem, cls) {
         cls = cls || '';
-        if(cls.replace(/\s/g, '').length == 0) return false;
+        if (cls.replace(/\s/g, '').length == 0) return false; //当cls没有参数时，返回false
         return new RegExp(' ' + cls + ' ').test(' ' + elem.className + ' ');
     }
-    function addClass(elem, cls){
-        if(!hasClass(elem, cls)){
-            elem.className += ' ' + cls;
+    function addClass(ele, cls) {
+        if (!hasClass(ele, cls)) {
+            ele.className = ele.className == '' ? cls : ele.className + ' ' + cls;
         }
     }
-    function removeClass(elem, cls) {
-        if (hasClass(elem, cls)) {
-            var newClass = ' ' + elem.className.replace(/[\t\r\n]/g, '') + ' ';
-            while (newClass.indexOf(' ' + cls + ' ') >= 0) {
-                newClass = newClass.replace(' ' + cls + ' ', ' ');
-            }
-            elem.className = newClass.replace(/^\s+|\s+$/g, '');
+    function removeClass(ele,cls) {
+        if (hasClass(ele,cls)) {
+            var reg = new RegExp('(\\s|^)'+cls+'(\\s|$)');
+            ele.className=ele.className.replace(reg,' ');
         }
+    }
+    function toggleClassTest(){
+        var obj = document. getElementById('test');
+        toggleClass(obj,"testClass");
     }
     function horseF(x,y,j){
         //console.log(x,y,oldPosX,oldPosY);
@@ -33,7 +36,6 @@
             liObj[j].appendChild(horseObj[0]);
         }
     }
-
     var map = {
         //入口
         init : function(){
@@ -103,28 +105,50 @@
                 (function(j){
                     liObj[j].addEventListener("click", function(e) {
                         var chessPieces = liObj[j].getElementsByTagName('div')[2];
+                        //先判断颜色, 先后顺序。
+                        if(count==0){
+
+                        }
+                        if(count%2){
+                            alert('shaungshu');
+                        }
+                        else{
+                            alert('danshu');
+                        }
+
+
+
+
+                        if(hasClass(chessPieces,'playR')){
+                            alert(21)
+                        }
+                        console.log(this);
+                        //chessPieces 当前选中的节点;
+
                         //化成坐标;
                         var x = j%9;
                         var y = parseInt(j/9);
-                        console.log(j)
+                        //console.log(j);
                         //判断当前点击处若没有被选中则选中并且添加闪烁
                         var ziObj = liObj[j].getElementsByTagName('div');
                         if(ziObj.length>2){
                             //子元素div个数大于2说明该位置有棋子
-                            if(!liObj[j].getAttribute('data-status')){
-                                //console.log(chessPieces);
-                                chessPieces.setAttribute('data-status',"choose");
-                                addClass(chessPieces,'flash');
-                                //保存原来位置的XY
-                                return oldPosX = x,oldPosY = y;
-                            }
+                            //第一次点击之后先去掉所有的flash;确保整个棋盘只有一个flash;
+                            (fashObj)?removeClass(fashObj,'flash'):"";
+                            addClass(chessPieces,'flash');
+                            //console.log(x,y)
+                            return oldPosX = x,oldPosY = y;
                         }
-                        //第一次点击之后先去掉所有的choose;确保整个棋盘只有一个choose;
                         for(var s = 0; s < liObj.length; s++) {
                             var qiObj = liObj[s].getElementsByTagName('div');
-                            if(qiObj[qiObj.length-1].getAttribute('data-status')){
+                            if(hasClass(qiObj[qiObj.length-1],'flash')){
                                 //do 走棋；
-                                horseF(x,y,j);
+
+
+
+
+
+                                //horseF(x,y,j);
                                 removeClass(liObj[j].getElementsByTagName('div')[2],'flash');
                             }
                         };
@@ -132,8 +156,6 @@
                     }, false);
                 })(i) ;
             }
-        },
-        rule : function(){
         }
     };
     map.init();
