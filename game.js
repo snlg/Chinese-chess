@@ -6,9 +6,10 @@
     var boxObj = document.getElementById('box');
     var liObj = boxObj.getElementsByClassName('lili');
     var horseObj = boxObj.getElementsByClassName('horse');
-    var fashObj = document.getElementsByClassName('flash')[0];
+    var fashObj = document.getElementsByClassName('flash');
     var oldPosX,oldPosY,nowPosX,nowPosY;
-    var count = 0;
+    var flag=0;
+    var count = 1;
     function hasClass(elem, cls) {
         cls = cls || '';
         if (cls.replace(/\s/g, '').length == 0) return false; //当cls没有参数时，返回false
@@ -29,11 +30,29 @@
         var obj = document. getElementById('test');
         toggleClass(obj,"testClass");
     }
+    function move(x,y,j){
+        for(var s = 0; s < liObj.length; s++) {
+            var qiObj = liObj[s].getElementsByTagName('div');
+            if(hasClass(qiObj[qiObj.length-1],'flash')){
+                //do 走棋；
+                horseF(x,y,j);
+                removeClass(fashObj[0],'flash');
+            }
+        };
+    }
     function horseF(x,y,j){
         //console.log(x,y,oldPosX,oldPosY);
         //alert(x+'和'+y)
+        console.log(oldPosX,oldPosY);
+        var oldPos=oldPosX+oldPosY*9-1;
         if((x == oldPosX+2 && y==oldPosY-1)||(x == oldPosX+2 && y==oldPosY+1)||(x == oldPosX-2 && y==oldPosY-1)||(x == oldPosX-2 && y==oldPosY+1)||(x == oldPosX-1 && y==oldPosY+2)||(x == oldPosX+1 && y==oldPosY+2)||(x == oldPosX-1 && y==oldPosY-2)||(x == oldPosX+1 && y==oldPosY-2)){
-            liObj[j].appendChild(horseObj[0]);
+            for(var fHorse=0;fHorse<horseObj.length;fHorse++){
+                if(hasClass(horseObj[fHorse],'flash')){
+                   // alert(fHorse);
+                    liObj[j].appendChild(horseObj[fHorse]);
+                }
+            }
+            return count +=1;
         }
     }
     var map = {
@@ -101,28 +120,101 @@
         //点击后获得对应位置
         getPos : function(){
             var self=this;
+
             for (var i = 0; i < liObj.length; i++) {
                 (function(j){
                     liObj[j].addEventListener("click", function(e) {
-                        var chessPieces = liObj[j].getElementsByTagName('div')[2];
+                        //化成坐标;
+                        var x = j%9;
+                        var y = parseInt(j/9);
+                        //console.log(count);
+                        console.log(j);
+                        var chessPieces = liObj[j].getElementsByTagName('div')[2];//选择位置的棋子div
+                        var ziObj = liObj[j].getElementsByTagName('div');//点击位置的div数组
+
+                        if(count%2&&(ziObj.length>2)){
+                            //奇数步并且有棋子
+                            if(hasClass(ziObj[ziObj.length-1],'playR')){
+                                if(fashObj.length>0){
+                                    //若棋盘已经有闪动的棋子
+                                    removeClass(fashObj[0],'flash');
+                                    addClass(chessPieces,'flash');
+                                    return oldPosX = x,oldPosY = y,flag=1;
+                                }
+                                else{
+                                    addClass(chessPieces,'flash');
+                                    return oldPosX = x,oldPosY = y,flag=1;
+                                }
+                            }
+                        }
+                        if(flag){
+                            if(fashObj.length>0){
+                                if(count%2&&(ziObj.length=2)){
+                                    move(x,y,j);
+                                }
+                            }
+                        }
+                        if((count%2==0)&&(ziObj.length>2)){
+                            //偶数步并且有棋子
+                            if(hasClass(ziObj[ziObj.length-1],'playB')){
+                                if(fashObj.length>0){
+                                    //若棋盘已经有闪动的棋子
+                                    removeClass(fashObj[0],'flash');
+                                    addClass(chessPieces,'flash');
+                                    return oldPosX = x,oldPosY = y,flag=0;
+                                }
+                                else{
+                                    addClass(chessPieces,'flash');
+                                    return oldPosX = x,oldPosY = y,flag=0;
+                                }
+                            }
+                        }
+                        if(!flag){
+                            if(fashObj.length>0){
+                                if((count%2==0)&&(ziObj.length=2)){
+                                    move(x,y,j);
+                                }
+                            }
+                        }
+
+                        if(flag==1){
+                            //move();
+
+                        }
+
+                        /* if(ziObj.length>2){
+                         //点击位置有棋子
+                         if(fashObj.length>0){
+                         //若棋盘已经有闪动的棋子
+                         removeClass(fashObj[0],'flash');
+                         addClass(chessPieces,'flash');
+                         return oldPosX = x,oldPosY = y;
+                         }
+                         else{
+                         addClass(chessPieces,'flash');
+                         return oldPosX = x,oldPosY = y,flag=1;
+                         }
+                         }*/
+                        /* else if(ziObj.length=2){
+                         //点击位置没有棋子
+                         if(fashObj.length>0) {
+                         move();
+                         }
+                         }
+                         return flag=1;*/
+                        /*
+                        var chessPieces = liObj[j].getElementsByTagName('div')[2];//选择的棋子
+                        var ziObj = liObj[j].getElementsByTagName('div');//点击位置的div数组
+                        alert(count);
                         //先判断颜色, 先后顺序。
-                        if(count==0){
-
+                        if(count%2&&hasClass(chessPieces,'playB')){
+                            alert("redmove")
+                            active();
                         }
-                        if(count%2){
-                            alert('shaungshu');
-                        }
-                        else{
-                            alert('danshu');
+                        else if(!count%2&&hasClass(chessPieces,'playB')){
+                            active();
                         }
 
-
-
-
-                        if(hasClass(chessPieces,'playR')){
-                            alert(21)
-                        }
-                        console.log(this);
                         //chessPieces 当前选中的节点;
 
                         //化成坐标;
@@ -130,29 +222,17 @@
                         var y = parseInt(j/9);
                         //console.log(j);
                         //判断当前点击处若没有被选中则选中并且添加闪烁
-                        var ziObj = liObj[j].getElementsByTagName('div');
-                        if(ziObj.length>2){
-                            //子元素div个数大于2说明该位置有棋子
-                            //第一次点击之后先去掉所有的flash;确保整个棋盘只有一个flash;
-                            (fashObj)?removeClass(fashObj,'flash'):"";
-                            addClass(chessPieces,'flash');
-                            //console.log(x,y)
-                            return oldPosX = x,oldPosY = y;
-                        }
-                        for(var s = 0; s < liObj.length; s++) {
-                            var qiObj = liObj[s].getElementsByTagName('div');
-                            if(hasClass(qiObj[qiObj.length-1],'flash')){
-                                //do 走棋；
-
-
-
-
-
-                                //horseF(x,y,j);
-                                removeClass(liObj[j].getElementsByTagName('div')[2],'flash');
+                        function active(){
+                            if(ziObj.length>2){
+                                //子元素div个数大于2说明该位置有棋子
+                                //第一次点击之后先去掉所有的flash;确保整个棋盘只有一个flash;
+                                (fashObj.length >0)?removeClass(fashObj[0],'flash'):"";
+                                addClass(chessPieces,'flash');
+                                //console.log(x,y)
+                                return oldPosX = x,oldPosY = y;
                             }
-                        };
-                        //return j;
+                        }
+*/                        //return j;
                     }, false);
                 })(i) ;
             }
