@@ -1,7 +1,6 @@
 /**
  * Created by 西爽 on 16-11-9.
  */
-
 !function(){
     var boxObj = document.getElementById('box');
     var liObj = boxObj.getElementsByClassName('lili');
@@ -70,6 +69,7 @@
         };
     }
     function Todo (Obj,j){
+        //alert(1);
         for(var fHorse=0;fHorse<Obj.length;fHorse++){
             if(hasClass(Obj[fHorse],'flash')){
                 break;
@@ -83,10 +83,26 @@
             liObj[j].appendChild(Obj[fHorse]);
             liObj[j].removeChild(liObj[j].children[2]);
             removeClass(flashObj[0],'flash');
+            if((kingObj.length<2)){
+                if(count%2){
+                    alert('红色赢')
+                }
+                else{
+                    alert('蓝色赢')
+                }
+            }
         }
         else{
             liObj[j].appendChild(Obj[fHorse]);
             removeClass(flashObj[0],'flash');
+            if((kingObj.length<2)){
+                if(count%2){
+                    alert('红色赢')
+                }
+                else{
+                    alert('蓝色赢')
+                }
+            }
         }
         return count +=1;
     }
@@ -115,8 +131,17 @@
         var ziObj = liObj[j].getElementsByTagName('div');//点击位置的div数组
         for(var ffire=0;ffire<fireObj.length;ffire++){
             if(hasClass(fireObj[ffire],'flash')){
+                //alert(1);
                 //alert(liObj[70].getElementsByTagName('div').length);
                 if(ziObj.length>2){
+                    if((kingObj.length<2)){
+                        if(count%2){
+                            alert('红色赢')
+                        }
+                        else{
+                            alert('蓝色赢')
+                        }
+                    }
                     //点击下去有棋子。
                     if(Math.abs(oldPos-j)%9==0){
                         //竖着走,判断中间有且只有一颗棋子
@@ -144,6 +169,14 @@
                     }
                 }
                 else{
+                    if((kingObj.length<2)){
+                        if(count%2){
+                            alert('红色赢')
+                        }
+                        else{
+                            alert('蓝色赢')
+                        }
+                    }
                     //点下去没有棋子，要判断中间不包括任何棋子
                     if(Math.abs(oldPos-j)%9==0){
                         //竖着走
@@ -226,7 +259,7 @@
         //alert(oldPos)
         if(oldPos<45){
             //红色方
-            console.log(j,oldPos);
+            //console.log(j,oldPos);
             //alert(count);
             if(count%2==0){
                 //已经过河的蓝色方
@@ -400,7 +433,7 @@
                         var x = j%9;
                         var y = parseInt(j/9);
                         //console.log(count);
-                        console.log(j);
+                        //console.log(j);
                         var chessPieces = liObj[j].getElementsByTagName('div')[2];//选择位置的棋子div
                         var ziObj = liObj[j].getElementsByTagName('div');//点击位置的div数组
                         // tro j:点击的位置，
