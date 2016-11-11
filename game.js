@@ -6,10 +6,12 @@
     var boxObj = document.getElementById('box');
     var liObj = boxObj.getElementsByClassName('lili');
     var horseObj = boxObj.getElementsByClassName('horse');
-    var fashObj = document.getElementsByClassName('flash');
+    var fireObj = boxObj.getElementsByClassName('fire');
+    var flashObj = document.getElementsByClassName('flash');
     var oldPosX,oldPosY,nowPosX,nowPosY;
     var flag=0;
-    var count = 1;
+    var count=1;
+    var xx;
     function hasClass(elem, cls) {
         cls = cls || '';
         if (cls.replace(/\s/g, '').length == 0) return false; //当cls没有参数时，返回false
@@ -26,32 +28,47 @@
             ele.className=ele.className.replace(reg,' ');
         }
     }
-    function toggleClassTest(){
-        var obj = document. getElementById('test');
-        toggleClass(obj,"testClass");
-    }
+
+
     function move(x,y,j){
         for(var s = 0; s < liObj.length; s++) {
             var qiObj = liObj[s].getElementsByTagName('div');
             if(hasClass(qiObj[qiObj.length-1],'flash')){
                 //马的走法;
-                if(hasClass(fashObj[0],'horse')){
-                    horseF(x,y,j);
+                if(hasClass(flashObj[0],'horse')){
+                    return horseF(x,y,j);
                 }
-
-
-                removeClass(fashObj[0],'flash');
+                //炮的走法;
+                if(hasClass(flashObj[0],'fire')){
+                    return fireF(x,y,j);
+                }
             }
         };
     }
-    function horseF(x,y,j){
-        //console.log(x,y,oldPosX,oldPosY);
-        //alert(x+'和'+y)
 
+    function Todo (Obj,j){
+        for(var fHorse=0;fHorse<Obj.length;fHorse++){
+            if(hasClass(Obj[fHorse],'flash')){
+                break;
+            }
+        }
+        //alert(fHorse);
+        var cssum =liObj[j].children;
+        //console.log(cssum.length);
+        if(cssum.length>2){
+            //console.log(liObj[j].children);
+            liObj[j].appendChild(Obj[fHorse]);
+            liObj[j].removeChild(liObj[j].children[2]);
+            removeClass(flashObj[0],'flash');
+        }
+        else{
+            liObj[j].appendChild(Obj[fHorse]);
+            removeClass(flashObj[0],'flash');
+        }
+        return count +=1;
+    }
+    function horseF(x,y,j){
         var oldPos=oldPosX+oldPosY*9;
-        //console.log(oldPosX,oldPosY,oldPos);
-        var sonSum= liObj[oldPos+9].children.length;
-        console.log(sonSum);
         if(
             ((x == oldPosX+2 && y==oldPosY-1)&&(liObj[oldPos+1].children.length<3))||
             ((x == oldPosX+2 && y==oldPosY+1)&&(liObj[oldPos+1].children.length<3))||
@@ -62,14 +79,79 @@
             ((x == oldPosX-1 && y==oldPosY-2)&&(liObj[oldPos-9].children.length<3))||
             ((x == oldPosX+1 && y==oldPosY-2)&&(liObj[oldPos-9].children.length<3)))
         {
-            for(var fHorse=0;fHorse<horseObj.length;fHorse++){
-                if(hasClass(horseObj[fHorse],'flash')){
-                   // alert(fHorse);
-                    liObj[j].appendChild(horseObj[fHorse]);
+            Todo(horseObj,j)
+        }
+    }
+    function fireF(x,y,j){
+        var oldPos=oldPosX+oldPosY*9;
+        //alert(1);
+        var chessPieces = liObj[j].getElementsByTagName('div')[2];//选择位置的棋子div
+        var ziObj = liObj[j].getElementsByTagName('div');//点击位置的div数组
+        for(var ffire=0;ffire<fireObj.length;ffire++){
+            if(hasClass(fireObj[ffire],'flash')){
+                //alert(liObj[70].getElementsByTagName('div').length);
+                if(ziObj.length>2){
+                    //点击下去有棋子。
+                    if(Math.abs(oldPos-j)%9==0){
+                        //竖着走,判断中间有且只有一颗棋子
+                        var paoMid=0;
+                        var pmargin=(j-oldPos)/9;
+                        for (var kpshu=0;kpshu<Math.abs(pmargin);kpshu++){
+                            if(liObj[oldPos+9*(kpshu+1)*pmargin/Math.abs(pmargin)].getElementsByTagName('div').length>2){
+                                paoMid+=1;
+                            }
+                        }
+                        if(paoMid==2){
+                            Todo(fireObj,j)
+                        }
+                    }else if(Math.abs(oldPos-j)<9){
+                        var pmargin=j-oldPos;
+                        var paoMid=0;
+                        for (var kpshu=1;kpshu<Math.abs(pmargin);kpshu++){
+                            if(liObj[oldPos+kpshu*pmargin/Math.abs(pmargin)].getElementsByTagName('div').length>2){
+                                paoMid+=1;
+                            }
+                        }
+                        if(paoMid==1){
+                            Todo(fireObj,j)
+                        }
+                    }
+                }
+                else{
+                    //点下去没有棋子，要判断中间不包括任何棋子
+                    if(Math.abs(oldPos-j)%9==0){
+                        //竖着走
+                        //alert(Math.abs(oldPos-j)/9);
+                        var pmargin=(j-oldPos)/9;
+                        //竖着中间隔着多少数字
+                        for (var kpshu=0;kpshu<Math.abs(pmargin);kpshu++){
+                            // alert(1);
+                            if(liObj[oldPos+9*(kpshu+1)*pmargin/Math.abs(pmargin)].getElementsByTagName('div').length>2){
+                                return false;
+                            }
+                        }
+                        liObj[j].appendChild(fireObj[ffire]);
+                        removeClass(flashObj[0],'flash');
+                        count+=1;//炮这边有个坑 第70个位置进来的话  会到有棋子的判断里面
+                    }
+                    else if(Math.abs(oldPos-j)<9){
+                        //横着走
+                        var pmargin=j-oldPos;
+                        for (var kpshu=1;kpshu<Math.abs(pmargin);kpshu++){
+                            if(liObj[oldPos+kpshu*pmargin/Math.abs(pmargin)].getElementsByTagName('div').length>2){
+                                return false;
+                            }
+                        }
+                        liObj[j].appendChild(fireObj[ffire]);
+                        removeClass(flashObj[0],'flash');
+                        count+=1;//炮这边有个坑 第70个位置进来的话  会到有棋子的判断里面
+                    }
                 }
             }
-            return count +=1;
         }
+
+
+
     }
     var map = {
         //入口
@@ -136,7 +218,6 @@
         //点击后获得对应位置
         getPos : function(){
             var self=this;
-
             for (var i = 0; i < liObj.length; i++) {
                 (function(j){
                     liObj[j].addEventListener("click", function(e) {
@@ -147,12 +228,13 @@
                         console.log(j);
                         var chessPieces = liObj[j].getElementsByTagName('div')[2];//选择位置的棋子div
                         var ziObj = liObj[j].getElementsByTagName('div');//点击位置的div数组
+                        // tro j:点击的位置，
                         if(count%2&&(ziObj.length>2)){
-                            //奇数步并且有棋子
+                            //奇数步并且有棋子(红方走)
                             if(hasClass(ziObj[ziObj.length-1],'playR')){
-                                if(fashObj.length>0){
+                                if(flashObj.length>0){
                                     //若棋盘已经有闪动的棋子
-                                    removeClass(fashObj[0],'flash');
+                                    removeClass(flashObj[0],'flash');
                                     addClass(chessPieces,'flash');
                                     return oldPosX = x,oldPosY = y,flag=1;
                                 }
@@ -162,30 +244,30 @@
                                 }
                             }
                         }
+                        if((count%2==0)&&(ziObj.length>2)){
+                            //偶数步并且有棋子(蓝方走)
+                            if(hasClass(ziObj[ziObj.length-1],'playB')){
+                                if(flashObj.length>0){
+                                    //若棋盘已经有闪动的棋子
+                                    removeClass(flashObj[0],'flash');
+                                    addClass(chessPieces,'flash');
+                                    return oldPosX = x,oldPosY = y,flag=0;
+                                }
+                                else{
+                                    addClass(chessPieces,'flash');
+                                    return oldPosX = x,oldPosY = y,flag=0;
+                                }
+                            }
+                        }
                         if(flag){
-                            if(fashObj.length>0){
+                            if(flashObj.length>0){
                                 if(count%2&&(ziObj.length=2)){
                                     move(x,y,j);
                                 }
                             }
                         }
-                        if((count%2==0)&&(ziObj.length>2)){
-                            //偶数步并且有棋子
-                            if(hasClass(ziObj[ziObj.length-1],'playB')){
-                                if(fashObj.length>0){
-                                    //若棋盘已经有闪动的棋子
-                                    removeClass(fashObj[0],'flash');
-                                    addClass(chessPieces,'flash');
-                                    return oldPosX = x,oldPosY = y,flag=0;
-                                }
-                                else{
-                                    addClass(chessPieces,'flash');
-                                    return oldPosX = x,oldPosY = y,flag=0;
-                                }
-                            }
-                        }
                         if(!flag){
-                            if(fashObj.length>0){
+                            if(flashObj.length>0){
                                 if((count%2==0)&&(ziObj.length=2)){
                                     move(x,y,j);
                                 }
