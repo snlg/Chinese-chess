@@ -7,11 +7,17 @@
     var liObj = boxObj.getElementsByClassName('lili');
     var horseObj = boxObj.getElementsByClassName('horse');
     var fireObj = boxObj.getElementsByClassName('fire');
+    var elephantObj = boxObj.getElementsByClassName('elephant');
+    var carObj = boxObj.getElementsByClassName('car');
+    var soldierObj = boxObj.getElementsByClassName('soldier');
+    var scholarObj = boxObj.getElementsByClassName('scholar');
+    var kingObj = boxObj.getElementsByClassName('king');
     var flashObj = document.getElementsByClassName('flash');
-    var oldPosX,oldPosY,nowPosX,nowPosY;
+    var oldPosX,oldPosY;
+    var topPos= [[0,'car'],[1,'horse'],[2,'elephant'],[3,'scholar'],[4,'king'],[5,'scholar'],[6,'elephant'],[7,'horse'],[8,'car'],[19,'fire'],[25,'fire'],[27,'soldier'],[29,'soldier'],[31,'soldier'],[33,'soldier'],[35,'soldier']];
+    var Sudoku=new Array(3,4,5,12,13,14,21,22,23);
     var flag=0;
     var count=1;
-    var xx;
     function hasClass(elem, cls) {
         cls = cls || '';
         if (cls.replace(/\s/g, '').length == 0) return false; //当cls没有参数时，返回false
@@ -28,8 +34,6 @@
             ele.className=ele.className.replace(reg,' ');
         }
     }
-
-
     function move(x,y,j){
         for(var s = 0; s < liObj.length; s++) {
             var qiObj = liObj[s].getElementsByTagName('div');
@@ -42,10 +46,29 @@
                 if(hasClass(flashObj[0],'fire')){
                     return fireF(x,y,j);
                 }
+                //象的走法；
+                if(hasClass(flashObj[0],'elephant')){
+                    return elephantF(x,y,j);
+                }
+                //车的走法；
+                if(hasClass(flashObj[0],'car')){
+                    return carF(x,y,j);
+                }
+                //兵的走法
+                if(hasClass(flashObj[0],'soldier')){
+                    return soldierF(x,y,j);
+                }
+                //将的走法
+                if(hasClass(flashObj[0],'king')){
+                    return kingF(x,y,j);
+                }
+                //士的走法
+                if(hasClass(flashObj[0],'scholar')){
+                    return scholarF(x,y,j);
+                }
             }
         };
     }
-
     function Todo (Obj,j){
         for(var fHorse=0;fHorse<Obj.length;fHorse++){
             if(hasClass(Obj[fHorse],'flash')){
@@ -80,6 +103,9 @@
             ((x == oldPosX+1 && y==oldPosY-2)&&(liObj[oldPos-9].children.length<3)))
         {
             Todo(horseObj,j)
+        }
+        else{
+            removeClass(flashObj[0],'flash');
         }
     }
     function fireF(x,y,j){
@@ -149,9 +175,159 @@
                 }
             }
         }
+    }
+    function elephantF(x,y,j){
+        var oldPos=oldPosX+oldPosY*9;
+        //alert(oldPos)
+        if((oldPos<44&&j<44)||(oldPos>44&&j>44)){
+            if(
+                ((x == oldPosX+2 && y==oldPosY+2)&&(liObj[oldPos+10].children.length<3))||
+                ((x == oldPosX+2 && y==oldPosY-2)&&(liObj[oldPos-8].children.length<3))||
+                ((x == oldPosX-2 && y==oldPosY+2)&&(liObj[oldPos+8].children.length<3))||
+                ((x == oldPosX-2 && y==oldPosY-2)&&(liObj[oldPos-10].children.length<3)))
+            {
+                Todo(elephantObj,j)
+            }
+            else{
+                removeClass(flashObj[0],'flash');
+            }
+        }
+        else{
+            removeClass(flashObj[0],'flash');
+            alert('此象不能过河')
+        }
+    }
+    function carF(x,y,j){
+        var oldPos=oldPosX+oldPosY*9;
+        if(Math.abs(oldPos-j)%9==0){
+            //shuzhezou
+            var pmargin=(j-oldPos)/9;
+            for (var kpshu=0;kpshu<Math.abs(pmargin)-1;kpshu++){
+                // alert(1);
+                if(liObj[oldPos+9*(kpshu+1)*pmargin/Math.abs(pmargin)].getElementsByTagName('div').length>2){
+                    return false;
+                }
+            }
+            Todo(carObj,j)
+        }
+        else if(Math.abs(oldPos-j)<9) {
+            //横着走
+            var pmargin = j - oldPos;
+            for (var kpshu = 1; kpshu < Math.abs(pmargin); kpshu++) {
+                if (liObj[oldPos + kpshu * pmargin / Math.abs(pmargin)].getElementsByTagName('div').length > 2) {
+                    return false;
+                }
+            }
+            Todo(carObj,j)
+        }
+    }
+    function soldierF(x,y,j){
+        var oldPos=oldPosX+oldPosY*9;
+        //alert(oldPos)
+        if(oldPos<45){
+            //红色方
+            console.log(j,oldPos);
+            //alert(count);
+            if(count%2==0){
+                //已经过河的蓝色方
+                if((j == oldPos-9)||(j == oldPos+1)||(j == oldPos-1)){
+                    Todo(soldierObj,j)
+                }
+            }
+            else{
+                //红色在红色这边(兵还没有过河)
+                if(j == oldPos+9) {
+                    //alert(1);
+                    Todo(soldierObj,j)
+                }
+                else{
+                    removeClass(flashObj[0],'flash');
+                }
+            }
+        }
+        if(oldPos>44){
+            if(count%2==1){
+                if((j == oldPos+9)||(j == oldPos+1)||(j == oldPos-1)){
+                    Todo(soldierObj,j)
+                }
+            }
+            else{
+                if(j == oldPos-9) {
+                    Todo(soldierObj,j)
+                }
+                else{
+                    removeClass(flashObj[0],'flash');
+                }
+            }
+        }
+    }
+    function kingF(x,y,j){
+        var oldPos=oldPosX+oldPosY*9;
+        if(oldPos<45){
+            //红色方九宫格
+            for(var i in Sudoku){
+                //console.log(Sudoku[i]);
+                if(j==Sudoku[i]){
+                    Todo(kingObj,j)
+                }
+            }
+        }
+        if(oldPos>45){
+            //红色方九宫格
+            for(var i in Sudoku){
+                var Sudokut=new Array;
+                //console.log(Sudoku[i]);
+                Sudokut.push(89-Sudoku[i]);
+                //console.log(Sudokut)
+                for(var c in Sudokut){
+                    if(j==Sudokut[c]){
+                        Todo(kingObj,j)
+                    }
+                }
 
+            }
+        }
+    }
+    function scholarF(x,y,j){
+        var oldPos=oldPosX+oldPosY*9;
+        if(oldPos<45){
+            //红色方九宫格
+            for(var i in Sudoku){
+                //console.log(Sudoku[i]);
+                if(j==Sudoku[i]){
+                    if(
+                        ((x == oldPosX+1 && y==oldPosY-1))||
+                        ((x == oldPosX+1 && y==oldPosY+1))||
+                        ((x == oldPosX-1 && y==oldPosY-1))||
+                        ((x == oldPosX-1 && y==oldPosY+1)))
+                    {
+                        Todo(scholarObj,j)
+                    }
+                }
+            }
+        }
+        if(oldPos>45){
+            //红色方九宫格
+            for(var i in Sudoku){
+                var Sudokut=new Array;
+                //console.log(Sudoku[i]);
+                Sudokut.push(89-Sudoku[i]);
+                //console.log(Sudokut)
+                for(var c in Sudokut){
+                    if(j==Sudokut[c]){
+                        if(
+                            ((x == oldPosX+1 && y==oldPosY-1))||
+                            ((x == oldPosX+1 && y==oldPosY+1))||
+                            ((x == oldPosX-1 && y==oldPosY-1))||
+                            ((x == oldPosX-1 && y==oldPosY+1)))
+                        {
+                            Todo(scholarObj,j)
+                        }
+                    }
+                }
 
-
+            }
+        }
     }
     var map = {
         //入口
@@ -190,7 +366,6 @@
         },
         //布置棋子初始位置 并且作为游戏的开始
         starGame : function(){
-            var topPos= [[0,'car'],[1,'horse'],[2,'elephant'],[3,'scholar'],[4,'king'],[5,'scholar'],[6,'elephant'],[7,'horse'],[8,'car'],[19,'fire'],[25,'fire'],[27,'soldier'],[29,'soldier'],[31,'soldier'],[33,'soldier'],[35,'soldier']];
             function addPos(pos,name,paly){
                 liObj[pos].innerHTML +="<div class="+"'"+name+" "+paly+"'"+"></div>";
             }
