@@ -433,7 +433,7 @@
                         var x = j%9;
                         var y = parseInt(j/9);
                         //console.log(count);
-                        //console.log(j);
+                        console.log(j);
                         var chessPieces = liObj[j].getElementsByTagName('div')[2];//选择位置的棋子div
                         var ziObj = liObj[j].getElementsByTagName('div');//点击位置的div数组
                         // tro j:点击的位置，
